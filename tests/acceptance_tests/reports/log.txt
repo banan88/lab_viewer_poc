@@ -1,0 +1,2 @@
+success: http://localhost:8080/labs/ took 15.299ms
+success: http://localhost:8080/labs/1 took 4.746ms
