@@ -12,8 +12,8 @@ use HTTP::Response;
 use Routers::DefaultRouter;
 use Util::Logger;
 
-use constant ROUTER => 'Routers::DefaultRouter' ;
-use constant LOG => 'Util::Logger';
+use constant router => 'Routers::DefaultRouter' ;
+use constant logger => 'Util::Logger';
 
 my $PORT_NUMBER = 8080;
 $SIG{INT}=\&handle_interrupt;
@@ -24,7 +24,7 @@ MAIN {
     my $http_server = Net::Async::HTTP::Server->new(
         on_request => sub {
             my ($self, $request) = @_;
-            my ($code, $result) = ROUTER->process_request($request);
+            my ($code, $result) = router->process_request($request);
 
             my $response = HTTP::Response->new ($code);
             $response->add_content ($result);
@@ -42,12 +42,13 @@ MAIN {
     );
 
     say 'LabViewer server started, listening on port: ', $PORT_NUMBER;
-    LOG->open('../tmp1.txt');
-    LOG->write_msg('YEAH RUNS');
+    logger->open('../tmp1.txt', 'INFO'); #TODO: reading level & location from properties
+    logger->write_msg('server started...', 'INFO');
     $async_loop->run;
 };
 
 sub handle_interrupt{
-    LOG->close();
+    logger->write_msg('server stopped.', 'INFO');
+    logger->close();
     exit(0);
 }

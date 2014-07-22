@@ -11,8 +11,11 @@ use warnings;
 use Exporter qw( import );
 our @EXPORT = qw( process_request );
 
-use Routers::Routes;
 use Regexp::Assemble;
+use Routers::Routes;
+use Util::Logger;
+
+use constant logger => 'Util::Logger';
 
 
 my %routes = Routers::Routes->route_mapping;
@@ -22,6 +25,9 @@ my $assembled_re = Regexp::Assemble->new->track->add( keys %routes );
 sub process_request{
 	my ($self, $request) = @_;
 	my $path= rtrim_slashes ( $request->path );
+	
+	logger->write_msg($request->method." $path", 'DEBUG');
+	
 	my ($target_sub, $arg) = resolve_sub($path);
 	$target_sub->($request, $arg);
 }
