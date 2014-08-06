@@ -24,12 +24,13 @@ my $assembled_re = Regexp::Assemble->new->track->add( keys %routes );
 
 sub process_request{
 	my ($self, $request) = @_;
-	my $path= rtrim_slashes ( $request->path );
+	my $path = rtrim_slashes ( $request->path );
+	my $method = $request->method;
 	
-	logger->write_msg($request->method." $path", 'DEBUG');
+	logger->write_msg($method." $path", 'DEBUG');
 	
-	my ($target_sub, $arg) = resolve_sub($path);
-	$target_sub->($request, $arg);
+	my ($target_sub, $path_args) = resolve_sub($path);
+	$target_sub->({'request'=> $request, 'path_args'=>$path_args});
 }
 
 

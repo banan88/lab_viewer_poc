@@ -24,13 +24,8 @@ MAIN {
     my $http_server = Net::Async::HTTP::Server->new(
         on_request => sub {
             my ($self, $request) = @_;
-            my ($code, $result) = router->process_request($request);
-
-            my $response = HTTP::Response->new ($code);
-            $response->add_content ($result);
-            $response->content_type ("application/json");
-            $response->content_length (length $response->content);
-            $request->respond($response);
+            my ($http_code, $body) = router->process_request($request);
+            $request->respond(create_response($http_code, $body));
         }
     );
 
@@ -46,6 +41,15 @@ MAIN {
     logger->write_msg('server started...', 'INFO');
     $async_loop->run;
 };
+
+sub create_response{
+    my ($http_code, $body) = @_;
+    my $response = HTTP::Response->new ($http_code);
+    $response->add_content ($body);
+    $response->content_type ("application/json");
+    $response->content_length (length $response->content);
+    return $response;
+}
 
 sub handle_interrupt{
     logger->write_msg('server stopped.', 'INFO');

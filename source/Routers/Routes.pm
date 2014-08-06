@@ -15,8 +15,8 @@ use constant error_controller => 'Controllers::ErrorController';
 
 sub route_mapping{
 	(
-		'\/labs\/(\d+)$' => sub { lab_controller->get_lab_details(@_); },
-		'^/labs$' => sub { lab_controller->get_all_labs; },
+		'\/labs\/(\d+)$' => sub { lab_controller->single_lab_action(@_); },
+		'^/labs$' => sub { lab_controller->all_labs_action(@_); },
 		
 		'_404' => sub { error_controller->_404; },
 	);
